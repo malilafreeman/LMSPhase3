@@ -8,6 +8,6 @@ namespace LMS.Models.LMSModels
         public string UId { get; set; } = null!;
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public DateOnly? Dob { get; set; }
+        public DateTime? Dob { get; set; }
     }
 }

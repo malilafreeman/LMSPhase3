@@ -11,6 +11,7 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using LMS.Models;
+using LMS.Models.LMSModels;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Student = LMS.Models.LMSModels.Student;
 
 namespace LMS.Areas.Identity.Pages.Account
 {
@@ -33,11 +35,14 @@ namespace LMS.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         //private readonly IEmailSender _emailSender;
 
+        private readonly LMSContext _db;
+
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger
+            ILogger<RegisterModel> logger,
+            LMSContext db
             /*IEmailSender emailSender*/)
         {
             _userManager = userManager;
@@ -46,6 +51,7 @@ namespace LMS.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             //_emailSender = emailSender;
+            _db = db;
         }
 
         /// <summary>
@@ -192,8 +198,89 @@ namespace LMS.Areas.Identity.Pages.Account
         string CreateNewUser(string firstName, string lastName, DateTime DOB, string departmentAbbrev, string role)
         {
 
+            //check user not in database already, then create new uID
+            //If db is empty, don't do the query
+
+
+            //var max_s_Uid =
+            //    (from s in _db.Students
+            //     orderby s.UId
+            //     select s.UId).First();
+
+            //var max_p_Uid =
+            //    (from p in _db.Professors
+            //     orderby p.UId
+            //     select p.UId).First();
+
+            //var max_a_Uid =
+            //    (from a in _db.Administrators
+            //     orderby a.UId
+            //     select a.UId).First();
+
+            //int s_Uid = int.Parse(max_s_Uid);
+
+            //int p_Uid = int.Parse(max_p_Uid);
+
+            //int a_Uid = int.Parse(max_a_Uid);
+
+            //int max_Uid = Math.Max(s_Uid, Math.Max(p_Uid, a_Uid));
+
+            //int new_Uid = max_Uid += 1;
+
+            //string uIDS_String = new_Uid.ToString();
+
+            //string uID = "u";
+
+
+            //while(uIDS_String.Length < 8)
+            //{
+            //    uIDS_String = "0" + uIDS_String;
+
+            //}
+
+            //uID = uID + uIDS_String;
+
+            string uID = "u0000000";
+
+
+
+            if (role == "Student")
+            {
+                Student st = new Student();
+                st.Dob = DOB;
+                st.FirstName = firstName;
+                st.LastName = lastName;
+                st.MajorDept = departmentAbbrev;
+                st.UId = uID;
+                
+                _db.Students.Add(st);
+                
+            }
+            else if (role == "Professor")
+            {
+                Professor pf = new Professor();
+                pf.FirstName = firstName;
+                pf.LastName = lastName;
+                pf.Dob = DOB;
+                pf.WorkDept = departmentAbbrev;
+                pf.UId = uID;
+                _db.Professors.Add(pf);
+
+            }
+            else if (role == "Administrator")
+            {
+                Administrator ad = new Administrator();
+                ad.FirstName = firstName;
+                ad.LastName = lastName;
+                ad.Dob = DOB;
+                ad.UId = uID;
+
+                _db.Administrators.Add(ad);
+            }
+            //User user = new User()
+
             //TODO FILL ME IN
-            return "ASDF";
+            return uID;
         }
 
         /*******End code to modify********/

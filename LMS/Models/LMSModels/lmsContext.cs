@@ -49,7 +49,9 @@ namespace LMS.Models.LMSModels
                     .HasMaxLength(8)
                     .HasColumnName("uID");
 
-                entity.Property(e => e.Dob).HasColumnName("DOB");
+                entity.Property(e => e.Dob)
+                    .HasColumnType("datetime")
+                    .HasColumnName("DOB");
 
                 entity.Property(e => e.FirstName).HasMaxLength(100);
 
@@ -229,7 +231,9 @@ namespace LMS.Models.LMSModels
                     .HasMaxLength(8)
                     .HasColumnName("uID");
 
-                entity.Property(e => e.Dob).HasColumnName("DOB");
+                entity.Property(e => e.Dob)
+                    .HasColumnType("datetime")
+                    .HasColumnName("DOB");
 
                 entity.Property(e => e.FirstName).HasMaxLength(100);
 
@@ -255,7 +259,9 @@ namespace LMS.Models.LMSModels
                     .HasMaxLength(8)
                     .HasColumnName("uID");
 
-                entity.Property(e => e.Dob).HasColumnName("DOB");
+                entity.Property(e => e.Dob)
+                    .HasColumnType("datetime")
+                    .HasColumnName("DOB");
 
                 entity.Property(e => e.FirstName).HasMaxLength(100);
 

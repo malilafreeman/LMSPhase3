@@ -14,7 +14,7 @@ namespace LMS.Models.LMSModels
         public string UId { get; set; } = null!;
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public DateOnly? Dob { get; set; }
+        public DateTime? Dob { get; set; }
         public string MajorDept { get; set; } = null!;
 
         public virtual Department MajorDeptNavigation { get; set; } = null!;
