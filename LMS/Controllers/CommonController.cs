@@ -30,8 +30,12 @@ namespace LMS.Controllers
         /// </summary>
         /// <returns>The JSON array</returns>
         public IActionResult GetDepartments()
-        {            
-            return Json(null);
+        {
+            var depts =
+                (from d in db.Departments
+                select new { name = d.Name, subject = d.Abbreviation });
+
+            return Json(depts);
         }
 
 

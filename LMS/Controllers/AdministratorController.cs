@@ -52,8 +52,25 @@ namespace LMS.Controllers
         /// false if the department already exists, true otherwise.</returns>
         public IActionResult CreateDepartment(string subject, string name)
         {
-            
-            return Json(new { success = false});
+
+            var already_existent_dept =
+                (from d in db.Departments
+                 where d.Abbreviation == subject
+                 select d.Abbreviation);
+
+            if (already_existent_dept.Any())
+            {
+                return Json(new { success = false });
+            }
+
+            Department dept = new Department();
+            dept.Name = name;
+            dept.Abbreviation = subject;
+
+            db.Departments.Add(dept);
+            db.SaveChanges();
+
+            return Json(new { success = true});
         }
 
 
@@ -66,9 +83,14 @@ namespace LMS.Controllers
         /// <param name="subjCode">The department subject abbreviation (as in "CS")</param>
         /// <returns>The JSON result</returns>
         public IActionResult GetCourses(string subject)
+
         {
-            
-            return Json(null);
+            var courses =
+                (from c in db.Courses
+                 where c.Department == subject
+                 select new { number = c.Number, name = c.Name });
+
+            return Json(courses);
         }
 
         /// <summary>
@@ -99,8 +121,47 @@ namespace LMS.Controllers
         /// <returns>A JSON object containing {success = true/false}.
         /// false if the course already exists, true otherwise.</returns>
         public IActionResult CreateCourse(string subject, int number, string name)
-        {           
-            return Json(new { success = false });
+        {
+
+            var already_existent_course =
+                (from c in db.Courses
+                 where c.Number == number
+                 && c.Department == subject
+                 select c.Name);
+
+            if (already_existent_course.Any())
+            {
+                return Json(new { success = false });
+            }
+
+
+            var max_CourseID =
+                (from c in db.Courses
+                 orderby c.CatalogId descending
+                 select c.CatalogId).Take(1);
+
+            uint courseID = 0;
+
+            if (max_CourseID.Any())
+            {
+                courseID = max_CourseID.FirstOrDefault();
+            }
+
+            int max_cID = (int)Math.Max(0, courseID);
+            int new_Uid = max_cID += 1;
+            uint cID = (uint)new_Uid;
+
+            Course course = new Course();
+            course.CatalogId = cID;
+            course.Department = subject;
+            course.Number = (uint)number;
+            course.Name = name;
+
+            db.Courses.Add(course);
+            db.SaveChanges();
+
+
+            return Json(new { success = true });
         }
 
 

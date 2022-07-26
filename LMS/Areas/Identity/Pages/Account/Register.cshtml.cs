@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections;
 using LMS.Models;
 using LMS.Models.LMSModels;
 
@@ -202,73 +203,105 @@ namespace LMS.Areas.Identity.Pages.Account
             //If db is empty, don't do the query
 
 
-            //var max_s_Uid =
-            //    (from s in _db.Students
-            //     orderby s.UId
-            //     select s.UId).First();
+            var max_s_Uid =
+                (from s in _db.Students
+                 orderby s.UId descending
+                 select s.UId).Take(1);
 
-            //var max_p_Uid =
-            //    (from p in _db.Professors
-            //     orderby p.UId
-            //     select p.UId).First();
+            var max_p_Uid =
+                (from p in _db.Professors
+                 orderby p.UId descending
+                 select p.UId).Take(1);
 
-            //var max_a_Uid =
-            //    (from a in _db.Administrators
-            //     orderby a.UId
-            //     select a.UId).First();
+            var max_a_Uid =
+                (from a in _db.Administrators
+                 orderby a.UId descending
+                 select a.UId).Take(1);
 
-            //int s_Uid = int.Parse(max_s_Uid);
+            int s_Uid = 0;
+            int p_Uid = 0;
+            int a_Uid = 0;
 
-            //int p_Uid = int.Parse(max_p_Uid);
-
-            //int a_Uid = int.Parse(max_a_Uid);
-
-            //int max_Uid = Math.Max(s_Uid, Math.Max(p_Uid, a_Uid));
-
-            //int new_Uid = max_Uid += 1;
-
-            //string uIDS_String = new_Uid.ToString();
-
-            //string uID = "u";
-
-
-            //while(uIDS_String.Length < 8)
-            //{
-            //    uIDS_String = "0" + uIDS_String;
-
-            //}
-
-            //uID = uID + uIDS_String;
-
-            string uID = "u0000000";
-
-
-
-            if (role == "Student")
+            if (max_s_Uid.Any())
             {
+                string string_id = (max_s_Uid.FirstOrDefault());
+                s_Uid = int.Parse(string_id.Remove(0, 1));
+            }
+
+            if (max_p_Uid.Any())
+            {
+                string string_id = (max_p_Uid.FirstOrDefault());
+                p_Uid = int.Parse(string_id.Remove(0, 1));
+            }
+
+            if (max_a_Uid.Any())
+            {
+                string string_id = (max_a_Uid.First());
+                a_Uid = int.Parse(string_id.Remove(0, 1));
+            }
+
+            //int s_Uid = int.Parse(max_s_Uid.FirstOrDefault());
+            //int p_Uid = int.Parse(max_p_Uid.FirstOrDefault());
+            //int a_Uid = int.Parse(max_a_Uid.FirstOrDefault());
+
+            int max_Uid = Math.Max(s_Uid, Math.Max(p_Uid, a_Uid));
+
+            max_Uid = Math.Max(max_Uid, 0);
+
+            //int max_Uid = Collections.max(Arrays.asList(s_Uid, p_Uid, a_Uid, 0));
+
+            int new_Uid = max_Uid += 1;
+
+            string uIDS_String = new_Uid.ToString();
+
+            string uID = "u";
+
+            while (uIDS_String.Length < 7)
+            {
+                uIDS_String = "0" + uIDS_String;
+            }
+
+            uID = uID + uIDS_String;
+
+
+            if (role.Equals("Student"))
+            {
+                Console.WriteLine("ADDING STUDENT");
                 Student st = new Student();
                 st.Dob = DOB;
                 st.FirstName = firstName;
                 st.LastName = lastName;
                 st.MajorDept = departmentAbbrev;
+                //st.MajorDept = "test";
                 st.UId = uID;
                 
                 _db.Students.Add(st);
-                
+                _db.SaveChanges();
+
+                Console.WriteLine("FINISHED ADDING STUDENT");
+
             }
-            else if (role == "Professor")
+            else if (role.Equals("Professor"))
             {
+                Console.WriteLine("ADDING PROFESSOR");
                 Professor pf = new Professor();
                 pf.FirstName = firstName;
                 pf.LastName = lastName;
                 pf.Dob = DOB;
                 pf.WorkDept = departmentAbbrev;
+                //pf.WorkDept = "test";
                 pf.UId = uID;
+
                 _db.Professors.Add(pf);
+                _db.SaveChanges();
+
+                Console.WriteLine("FINISHED ADDING PROFESSOR");
+
 
             }
-            else if (role == "Administrator")
+            else if (role.Equals("Administrator"))
             {
+                Console.WriteLine("ADDING ADMIN");
                 Administrator ad = new Administrator();
                 ad.FirstName = firstName;
                 ad.LastName = lastName;
@@ -276,10 +309,12 @@ namespace LMS.Areas.Identity.Pages.Account
                 ad.UId = uID;
 
                 _db.Administrators.Add(ad);
-            }
-            //User user = new User()
+                _db.SaveChanges();
 
-            //TODO FILL ME IN
+                Console.WriteLine("FINISHED ADDING ADMIN");
+
+            }
+
             return uID;
         }
 
