@@ -206,7 +206,6 @@ namespace LMS.Controllers
 
                 //Console.WriteLine("c.year: ", course_check.First().Year);
                 //Console.WriteLine("year: ", year);
-
             }
 
             

@@ -113,7 +113,9 @@ namespace LMS.Models.LMSModels
 
             modelBuilder.Entity<Class>(entity =>
             {
-                entity.HasIndex(e => new { e.CatalogId, e.Semester }, "CatalogID")
+                entity.HasIndex(e => e.CatalogId, "CatalogID");
+
+                entity.HasIndex(e => new { e.Semester, e.Year, e.CatalogId }, "Classes_ibfk_3")
                     .IsUnique();
 
                 entity.HasIndex(e => e.ProfessorId, "ProfessorID");
@@ -144,7 +146,7 @@ namespace LMS.Models.LMSModels
                     .WithMany(p => p.Classes)
                     .HasForeignKey(d => d.CatalogId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("Classes_ibfk_1");
+                    .HasConstraintName("Classes_ibfk_3");
 
                 entity.HasOne(d => d.Professor)
                     .WithMany(p => p.Classes)

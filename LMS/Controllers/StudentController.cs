@@ -76,8 +76,31 @@ namespace LMS.Controllers
         /// <param name="uid">The uid of the student</param>
         /// <returns>The JSON array</returns>
         public IActionResult GetMyClasses(string uid)
-        {           
-            return Json(null);
+        {
+            var myClasses =
+
+                from e in db.EnrollmentGrades
+                where e.StudentId == uid
+                join cl in db.Classes
+                on e.ClassId equals cl.ClassId
+                into relevant_classes
+                from rc in relevant_classes
+                join co in db.Courses
+                on rc.CatalogId equals co.CatalogId
+                into all_components
+                from ac in all_components
+                select new
+                {
+                    subject = ac.Department,
+                    number = ac.Number,
+                    name = ac.Name,
+                    season = rc.Semester,
+                    year = rc.Year,
+                    grade = e.Grade
+                };
+
+
+            return Json(myClasses);
         }
 
         /// <summary>
@@ -136,8 +159,36 @@ namespace LMS.Controllers
         /// <returns>A JSON object containing {success = {true/false}. 
         /// false if the student is already enrolled in the class, true otherwise.</returns>
         public IActionResult Enroll(string subject, int num, string season, int year, string uid)
-        {          
-            return Json(new { success = false});
+        {
+            var courseID =
+                (from c in db.Courses
+                 where (c.Number == num && c.Department == subject)
+                 select c.CatalogId).First();
+
+            var classID =
+                (from c in db.Classes
+                 where (c.Semester == season && c.Year == year && c.CatalogId == courseID)
+                 select c.ClassId).First();
+
+            var already_enrolled =
+                (from e in db.EnrollmentGrades
+                 where (e.ClassId == classID && e.StudentId == uid)
+                 select e);
+
+            if (already_enrolled.Any())
+            {
+                return Json(new { success = false });
+            }
+
+            EnrollmentGrade er = new EnrollmentGrade();
+            er.ClassId = classID;
+            er.StudentId = uid;
+            er.Grade = "--";
+
+            db.EnrollmentGrades.Add(er);
+            db.SaveChanges();
+
+            return Json(new { success = true } );
         }
 
 
