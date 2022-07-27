@@ -12,12 +12,13 @@ namespace LMS.Models.LMSModels
         }
 
         public uint ClassId { get; set; }
-        public string Semester { get; set; } = null!;
+        public string? Semester { get; set; }
         public string Location { get; set; } = null!;
-        public TimeOnly StartTime { get; set; }
-        public TimeOnly EndTime { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
         public uint CatalogId { get; set; }
         public string ProfessorId { get; set; } = null!;
+        public int? Year { get; set; }
 
         public virtual Course Catalog { get; set; } = null!;
         public virtual Professor Professor { get; set; } = null!;

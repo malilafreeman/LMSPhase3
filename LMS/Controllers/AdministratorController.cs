@@ -103,10 +103,14 @@ namespace LMS.Controllers
         /// <param name="subject">The department subject abbreviation</param>
         /// <returns>The JSON result</returns>
         public IActionResult GetProfessors(string subject)
+
         {
-            
-            return Json(null);
-            
+            var profs =
+                (from p in db.Professors
+                 where p.WorkDept == subject
+                 select new { lname = p.LastName, fname = p.FirstName, uid = p.UId });
+
+            return Json(profs); 
         }
 
 
@@ -183,13 +187,79 @@ namespace LMS.Controllers
         /// a Class offering of the same Course in the same Semester,
         /// true otherwise.</returns>
         public IActionResult CreateClass(string subject, int number, string season, int year, DateTime start, DateTime end, string location, string instructor)
-        {            
-            return Json(new { success = false});
+        {
+
+            var catalog_ID =
+                (from c in db.Courses
+                where c.Department == subject
+                && c.Number == number
+                select c.CatalogId);
+
+            var course_check =
+                (from c in db.Classes
+                 where c.Semester == season && c.Year == year && c.CatalogId == catalog_ID.First()
+                 select c);
+
+            if (course_check.Any())
+            {
+                return Json(new { success = false });
+
+                //Console.WriteLine("c.year: ", course_check.First().Year);
+                //Console.WriteLine("year: ", year);
+
+            }
+
+            
+
+            var location_check =
+               (from c in db.Classes
+                where c.Location == location && c.Semester == season && c.Year == year &&
+                ((c.StartTime <= start && start < c.EndTime) || (c.StartTime < end && end <= c.EndTime) || (c.StartTime >= start && c.EndTime <= end) )
+
+                select c);
+
+            if (location_check.Any())
+
+            {
+                return Json(new { success = false });
+            }
+
+
+
+            //if () {  return Json(new { success = false}); }else {}
+
+            var max_ClassID =
+                (from c in db.Classes
+                 orderby c.ClassId descending
+                 select c.ClassId).Take(1);
+
+            uint classID = 0;
+
+            if (max_ClassID.Any())
+            {
+                classID = max_ClassID.FirstOrDefault();
+            }
+
+            int max_cID = (int)Math.Max(0, classID);
+            int new_ID = max_cID += 1;
+            uint cID = (uint)new_ID;
+
+            Class cl = new Class();
+            cl.ClassId = cID;
+            cl.Semester = season;
+            cl.Year = year;
+            cl.Location = location;
+            cl.StartTime = start;
+            cl.EndTime = end;
+            cl.CatalogId = catalog_ID.FirstOrDefault();
+            cl.ProfessorId = instructor;
+
+            db.Classes.Add(cl);
+            db.SaveChanges();
+
+
+            return Json(new { success = true } );
         }
-
-
-        /*******End code to modify********/
-
     }
 }
 

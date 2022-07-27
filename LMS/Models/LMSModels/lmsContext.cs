@@ -126,7 +126,7 @@ namespace LMS.Models.LMSModels
                     .HasColumnType("int(10) unsigned")
                     .HasColumnName("CatalogID");
 
-                entity.Property(e => e.EndTime).HasColumnType("time");
+                entity.Property(e => e.EndTime).HasColumnType("datetime");
 
                 entity.Property(e => e.Location).HasMaxLength(100);
 
@@ -134,9 +134,11 @@ namespace LMS.Models.LMSModels
                     .HasMaxLength(8)
                     .HasColumnName("ProfessorID");
 
-                entity.Property(e => e.Semester).HasMaxLength(11);
+                entity.Property(e => e.Semester).HasMaxLength(6);
 
-                entity.Property(e => e.StartTime).HasColumnType("time");
+                entity.Property(e => e.StartTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Year).HasColumnType("int(11)");
 
                 entity.HasOne(d => d.Catalog)
                     .WithMany(p => p.Classes)
