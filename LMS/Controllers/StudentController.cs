@@ -143,7 +143,9 @@ namespace LMS.Controllers
                     aname = f.Name,
                     cname = cat.Name,
                     due = f.Due,
-                    score = 0
+                    score = (from s in db.Submissions
+                             where s.AssignmentName == f.Name && s.StudentId == uid
+                             select s.Score).First()
                 };
 
             return Json(asgn);
@@ -170,8 +172,43 @@ namespace LMS.Controllers
         /// <returns>A JSON object containing {success = true/false}</returns>
         public IActionResult SubmitAssignmentText(string subject, int num, string season, int year,
           string category, string asgname, string uid, string contents)
-        {           
-            return Json(new { success = false });
+        {
+
+            // Submit first time
+
+            var check_sub_history =
+                (from s in db.Submissions
+                 where s.StudentId == uid && s.AssignmentName == asgname
+                 select s);
+
+
+            // If the student has already submitted
+            if (check_sub_history.Any())
+            {
+                var get_student = check_sub_history.First();
+
+                get_student.Time = DateTime.Now;
+                get_student.Contents = contents;
+
+                db.SaveChanges();
+
+                return Json(new { success = true });
+            }
+
+            // If they haven't made a submission already
+            else
+            {
+                Submission sub = new Submission();
+                sub.StudentId = uid;
+                sub.AssignmentName = asgname;
+                sub.Time = DateTime.Now;
+                sub.Score = 0;
+                sub.Contents = contents;
+
+                db.Submissions.Add(sub);
+                db.SaveChanges();
+                return Json(new { success = true });
+            }
         }
 
 

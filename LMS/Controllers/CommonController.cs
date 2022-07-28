@@ -99,7 +99,7 @@ namespace LMS.Controllers
                  where c.CatalogId == catalog_ID.First()
                  from p in db.Professors
                  where p.UId == c.ProfessorId
-                 select new { season = c.Semester, year = c.Year, location = c.Location, start = c.StartTime, end = c.EndTime, fname = p.FirstName, lname = p.LastName});
+                 select new { season = c.Semester, year = c.Year, location = c.Location, start = c.StartTime.ToString(), end = c.EndTime.ToString(), fname = p.FirstName, lname = p.LastName});
 
             return Json(offerings);
         }
@@ -118,9 +118,6 @@ namespace LMS.Controllers
         /// <returns>The assignment contents</returns>
         public IActionResult GetAssignmentContents(string subject, int num, string season, int year, string category, string asgname)
         {
-
-            Console.WriteLine("INTO THIS QUERY");
-
             var asgn =
               from co in db.Courses
               where co.Department == subject && co.Number == num
@@ -144,7 +141,6 @@ namespace LMS.Controllers
               where f.Name == asgname
               select f.Contents;
 
-            Console.WriteLine("THIS IS OUR STRING: ", asgn.First());
             return Content(asgn.First());
         }
 
@@ -164,8 +160,21 @@ namespace LMS.Controllers
         /// <param name="uid">The uid of the student who submitted it</param>
         /// <returns>The submission text</returns>
         public IActionResult GetSubmissionText(string subject, int num, string season, int year, string category, string asgname, string uid)
-        {            
-            return Content("");
+        {
+
+            var asg_text =
+                (from s in db.Submissions
+                 where s.StudentId == uid && s.AssignmentName == asgname
+                 select s.Contents);
+
+            if (asg_text.Any())
+            {
+                return Content(asg_text.First());
+            }
+            else
+            {
+                return Content("");
+            }
         }
 
 
@@ -222,9 +231,6 @@ namespace LMS.Controllers
 
             return Json(new { success = false });
         }
-
-
-        /*******End code to modify********/
     }
 }
 

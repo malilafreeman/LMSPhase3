@@ -196,7 +196,9 @@ namespace LMS_CustomIdentity.Controllers
                         aname = f.Name,
                         cname = cat.Name,
                         due = f.Due,
-                        submissions = 0
+                        submissions = (from s in db.Submissions
+                                       where s.AssignmentName == f.Name
+                                       select s).Count()
                     };
 
                 return Json(asgn);
@@ -230,13 +232,13 @@ namespace LMS_CustomIdentity.Controllers
                             aname = f.Name,
                             cname = cat.Name,
                             due = f.Due,
-                            submissions = 0
-                        };
+                            submissions = (from s in db.Submissions
+                                           where s.AssignmentName == f.Name
+                                           select s).Count()
+                    };
 
                 return Json(asgn);
-
             }
-
         }
 
 
@@ -421,7 +423,25 @@ namespace LMS_CustomIdentity.Controllers
         /// <returns>The JSON array</returns>
         public IActionResult GetSubmissionsToAssignment(string subject, int num, string season, int year, string category, string asgname)
         {
-            return Json(null);
+
+            var submissions =
+                from su in db.Submissions
+                where su.AssignmentName == asgname
+                join st in db.Students
+                on su.StudentId equals st.UId
+                into sub_and_students
+
+                from ss in sub_and_students
+                select new
+                {
+                    fname = ss.FirstName,
+                    lname = ss.LastName,
+                    uid = ss.UId,
+                    time = su.Time,
+                    score = su.Score
+                };
+     
+            return Json(submissions);
         }
 
 
@@ -439,6 +459,24 @@ namespace LMS_CustomIdentity.Controllers
         /// <returns>A JSON object containing success = true/false</returns>
         public IActionResult GradeSubmission(string subject, int num, string season, int year, string category, string asgname, string uid, int score)
         {
+
+            var submission =
+                (from s in db.Submissions
+                 where s.AssignmentName == asgname && s.StudentId == uid
+                 select s);
+
+            if (submission.Any())
+            {
+                var get_sub = submission.First();
+
+                get_sub.Score = score;
+
+                db.SaveChanges();
+
+                return Json(new { success = true });
+            }
+
+
             return Json(new { success = false });
         }
 
@@ -481,6 +519,80 @@ namespace LMS_CustomIdentity.Controllers
 
 
             return Json(myClasses);
+        }
+
+        private int AutoGrade1(string subject, int num, string season, int year, string category, string asgname, string uid, int score)
+        {
+            // Get a list of all assignments for the class 
+            var class_asgns =
+                from co in db.Courses
+                where co.Department == subject && co.Number == num
+                join cl in db.Classes
+                on co.CatalogId equals cl.CatalogId
+                into classes_and_courses
+
+                from cc in classes_and_courses
+                where cc.Semester == season && cc.Year == year
+                join ac in db.AssignmentCategories
+                on cc.ClassId equals ac.ClassId
+                into categories
+
+                from cat in categories
+                join a in db.Assignments
+                on cat.CategoryId equals a.CategoryId
+                into class_assignments
+
+                from ca in class_assignments
+                join s in db.Submissions
+                on new { A = ca.Name, B = uid } equals new { A = s.AssignmentName, B = s.StudentId}
+                into left_joined
+
+                from j in left_joined.DefaultIfEmpty()
+
+                select new
+                {
+                    uID = j.StudentId,
+                    score = j.Score
+                };
+
+
+
+
+
+
+            //    from co in db.Courses
+            //    where co.Department == subject && co.Number == num
+            //    join cl in db.Classes
+            //    on co.CatalogId equals cl.CatalogId
+            //    into classes_and_courses
+
+            //    from cc in classes_and_courses
+            //    where cc.Semester == season && cc.Year == year
+            //    join e in db.EnrollmentGrades
+            //    on cc.ClassId equals e.ClassId
+            //    into cc_and_enrollments
+
+            //    from ce in cc_and_enrollments
+            //    join s in db.Students
+            //    on ce.StudentId equals s.UId
+            //    into all_components
+
+            //    from ac in all_components
+
+            //    //from ac in all_components
+
+
+
+            //    //select new
+            //    //{
+            //    //    fname = ac.FirstName,
+            //    //    lname = ac.LastName,
+            //    //    uid = ac.UId,
+            //    //    dob = ac.Dob,
+            //    //    grade = ce.Grade
+            //    //};
+
+            return 0;
         }
     }
 }

@@ -14,8 +14,8 @@ namespace LMS.Models.LMSModels
         public uint ClassId { get; set; }
         public string? Semester { get; set; }
         public string Location { get; set; } = null!;
-        public DateTime? StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
+        public TimeOnly? StartTime { get; set; }
+        public TimeOnly? EndTime { get; set; }
         public uint CatalogId { get; set; }
         public string ProfessorId { get; set; } = null!;
         public int? Year { get; set; }

@@ -205,12 +205,19 @@ namespace LMS.Controllers
                 return Json(new { success = false });
             }
 
-            
+            TimeOnly time_from_start = TimeOnly.FromDateTime(start);
+            TimeOnly time_from_end = TimeOnly.FromDateTime(end);
+
 
             var location_check =
                (from c in db.Classes
                 where c.Location == location && c.Semester == season && c.Year == year &&
-                ((c.StartTime <= start && start < c.EndTime) || (c.StartTime < end && end <= c.EndTime) || (c.StartTime >= start && c.EndTime <= end) )
+                (c.StartTime <= time_from_start && time_from_start < c.EndTime
+                || (c.StartTime < time_from_end && time_from_end <= c.EndTime)
+                || (c.StartTime >= time_from_start && c.EndTime <= time_from_end))
+                //(c.StartTime <= start && start < c.EndTime
+                //|| (c.StartTime < end && end <= c.EndTime)
+                //|| (c.StartTime >= start && c.EndTime <= end))
 
                 select c);
 
@@ -245,8 +252,10 @@ namespace LMS.Controllers
             cl.Semester = season;
             cl.Year = year;
             cl.Location = location;
-            cl.StartTime = start;
-            cl.EndTime = end;
+            cl.StartTime = TimeOnly.FromDateTime(start);
+            cl.EndTime = TimeOnly.FromDateTime(end);
+            //cl.StartTime = start;
+            //cl.EndTime = end;
             cl.CatalogId = catalog_ID.FirstOrDefault();
             cl.ProfessorId = instructor;
 

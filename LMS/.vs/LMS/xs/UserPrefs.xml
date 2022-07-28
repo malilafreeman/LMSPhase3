@@ -1,3 +1,70 @@
 ﻿<Properties StartupConfiguration="{3AFBDD63-8BCC-4D7E-A6F3-39A31D3A5BB0}|Default">
   <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.LMS PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Controllers/StudentController.cs">
+    <Files>
+      <File FileName="Program.cs" Line="27" Column="84" />
+      <File FileName="Models/LMSModels/lmsContext.cs" Line="1" Column="1" />
+      <File FileName="Models/LMSModels/EnrollmentGrade.cs" Line="1" Column="1" />
+      <File FileName="Models/LMSModels/Administrator.cs" Line="1" Column="1" />
+      <File FileName="Models/LMSModels/Assignment.cs" Line="1" Column="1" />
+      <File FileName="Models/LMSModels/Submission.cs" Line="1" Column="1" />
+      <File FileName="Models/LMSModels/Student.cs" Line="17" Column="28" />
+      <File FileName="Controllers/AdministratorController.cs" Line="205" Column="54" />
+      <File FileName="Controllers/CommonController.cs" Line="224" Column="10" />
+      <File FileName="Controllers/HomeController.cs" Line="1" Column="1" />
+      <File FileName="Controllers/ProfessorController.cs" Line="121" Column="10" />
+      <File FileName="Controllers/StudentController.cs" Line="238" Column="17" />
+      <File FileName="Areas/Identity/Pages/Account/Register.cshtml" Line="1" Column="1" />
+      <File FileName="Areas/Identity/Pages/Account/Register.cshtml.cs" Line="269" Column="1" />
+      <File FileName="Areas/Identity/Pages/Account/ApplicationUser.cs" Line="1" Column="1" />
+      <File FileName="Models/ErrorViewModel.cs" Line="1" Column="1" />
+      <File FileName="Areas/Identity/Pages/Account/Login.cshtml.cs" Line="76" Column="55" />
+      <File FileName="Areas/Identity/Pages/_ValidationScriptsPartial.cshtml" Line="1" Column="1" />
+      <File FileName="Areas/Identity/Pages/Account/_ViewImports.cshtml" Line="1" Column="1" />
+      <File FileName="Areas/Identity/Pages/Account/Login.cshtml" Line="1" Column="1" />
+      <File FileName="Areas/Identity/Pages/Account/Manage/ManageNavPages.cs" Line="38" Column="44" />
+      <File FileName="Areas/Identity/Data/LMSIdentityDbContext.cs" Line="1" Column="1" />
+      <File FileName="Models/LMSModels/Department.cs" Line="1" Column="1" />
+      <File FileName="Models/LMSModels/Course.cs" Line="1" Column="1" />
+      <File FileName="Models/LMSModels/Class.cs" Line="1" Column="1" />
+      <File FileName="Views/Shared/Assignment.cshtml" Line="4" Column="2" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="LMS" expanded="True">
+            <Node name="LMS" expanded="True">
+              <Node name="Areas" expanded="True">
+                <Node name="Identity" expanded="True">
+                  <Node name="Data" expanded="True" />
+                  <Node name="Pages" expanded="True">
+                    <Node name="Account" expanded="True">
+                      <Node name="Manage" expanded="True" />
+                      <Node name="Login.cshtml" expanded="True" />
+                      <Node name="Register.cshtml" expanded="True" />
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node name="Controllers" expanded="True">
+                <Node name="StudentController.cs" selected="True" />
+              </Node>
+              <Node name="Models" expanded="True">
+                <Node name="LMSModels" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
 </Properties>
