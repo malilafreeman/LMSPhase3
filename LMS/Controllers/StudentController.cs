@@ -118,8 +118,35 @@ namespace LMS.Controllers
         /// <param name="uid"></param>
         /// <returns>The JSON array</returns>
         public IActionResult GetAssignmentsInClass(string subject, int num, string season, int year, string uid)
-        {            
-            return Json(null);
+        {
+            var asgn =
+                from co in db.Courses
+                where co.Department == subject && co.Number == num
+                join cl in db.Classes
+                on co.CatalogId equals cl.CatalogId
+                into classes_and_courses
+
+                from cc in classes_and_courses
+                where cc.Semester == season && cc.Year == year
+                join ac in db.AssignmentCategories
+                on cc.ClassId equals ac.ClassId
+                into categories
+
+                from cat in categories
+                join a in db.Assignments
+                on cat.CategoryId equals a.CategoryId
+                into final
+
+                from f in final
+                select new
+                {
+                    aname = f.Name,
+                    cname = cat.Name,
+                    due = f.Due,
+                    score = 0
+                };
+
+            return Json(asgn);
         }
 
 
@@ -209,8 +236,6 @@ namespace LMS.Controllers
             return Json(null);
         }
                 
-        /*******End code to modify********/
-
     }
 }
 

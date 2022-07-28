@@ -203,9 +203,6 @@ namespace LMS.Controllers
             if (course_check.Any())
             {
                 return Json(new { success = false });
-
-                //Console.WriteLine("c.year: ", course_check.First().Year);
-                //Console.WriteLine("year: ", year);
             }
 
             

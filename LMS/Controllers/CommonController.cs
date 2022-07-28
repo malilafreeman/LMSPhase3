@@ -117,8 +117,35 @@ namespace LMS.Controllers
         /// <param name="asgname">The name of the assignment in the category</param>
         /// <returns>The assignment contents</returns>
         public IActionResult GetAssignmentContents(string subject, int num, string season, int year, string category, string asgname)
-        {            
-            return Content("");
+        {
+
+            Console.WriteLine("INTO THIS QUERY");
+
+            var asgn =
+              from co in db.Courses
+              where co.Department == subject && co.Number == num
+              join cl in db.Classes
+              on co.CatalogId equals cl.CatalogId
+              into classes_and_courses
+
+              from cc in classes_and_courses
+              where cc.Semester == season && cc.Year == year
+              join ac in db.AssignmentCategories
+              on cc.ClassId equals ac.ClassId
+              into categories
+
+              from cat in categories
+              where cat.Name == category
+              join a in db.Assignments
+              on cat.CategoryId equals a.CategoryId
+              into final
+
+              from f in final
+              where f.Name == asgname
+              select f.Contents;
+
+            Console.WriteLine("THIS IS OUR STRING: ", asgn.First());
+            return Content(asgn.First());
         }
 
 
@@ -159,7 +186,40 @@ namespace LMS.Controllers
         /// or an object containing {success: false} if the user doesn't exist
         /// </returns>
         public IActionResult GetUser(string uid)
-        {           
+        {
+            var student =
+                (from s in db.Students
+                 where s.UId == uid
+                 select new
+                 {fname = s.FirstName, lname = s.LastName, uid = s.UId, department = s.MajorDept });
+
+            if (student.Any()) {
+                return Json(student.First());
+            }
+
+            var prof =
+                (from p in db.Professors
+                 where p.UId == uid
+                 select new
+                 { fname = p.FirstName, lname = p.LastName, uid = p.UId, department = p.WorkDept });
+
+            if (prof.Any())
+            {
+                return Json(prof.First());
+            }
+
+
+            var ad =
+                (from a in db.Administrators
+                 where a.UId == uid
+                 select new
+                 { fname = a.FirstName, lname = a.LastName, uid = a.UId });
+
+            if (ad.Any())
+            {
+                return Json(ad.First());
+            }
+
             return Json(new { success = false });
         }
 
