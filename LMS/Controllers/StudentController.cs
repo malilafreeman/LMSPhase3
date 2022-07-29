@@ -271,7 +271,47 @@ namespace LMS.Controllers
         public IActionResult GetGPA(string uid)
         {
 
-            return Json(null);
+            IDictionary<string, double> GPA_converter = new Dictionary<string, double>();
+            GPA_converter.Add("A", 4.0);
+            GPA_converter.Add("A-", 3.7);
+            GPA_converter.Add("B+", 3.3);
+            GPA_converter.Add("B", 3.0);
+            GPA_converter.Add("B-", 2.7);
+            GPA_converter.Add("C+", 2.3);
+            GPA_converter.Add("C", 2.0);
+            GPA_converter.Add("C-", 1.7);
+            GPA_converter.Add("D+", 1.3);
+            GPA_converter.Add("D", 1.0);
+            GPA_converter.Add("D-", 0.7);
+            GPA_converter.Add("E", 0.0);
+
+
+            var student_grades =
+                from e in db.EnrollmentGrades
+                where e.StudentId == uid
+                select e.Grade;
+
+            double grade_sum = 0;
+            int num_classes = 0;
+
+            foreach (var grade in student_grades)
+            {
+
+                Console.WriteLine("This is the grade: " + grade);
+                if (grade != "--")
+                {
+                    Console.WriteLine("Passed if check" + grade);
+                    Console.WriteLine("Passed if check" + GPA_converter[grade]);
+
+                    grade_sum += GPA_converter[grade];
+                    num_classes++;
+                }
+            }
+
+            double GPA = grade_sum / num_classes;
+
+
+            return Json(new { gpa = GPA });
         }
                 
     }
